@@ -1,0 +1,41 @@
+% Get file names from user
+fileNameOpen = input('Please input the name of the first file to be opened, including file extension: ', 's');
+fileNameClose = input('Please input the name of the second file to be opened, including file extension: ', 's');
+
+% Import first file Into Matlab, format [time;value]
+fileID = fopen(fileNameOpen, 'r');
+
+row1 = fscanf(fileID,'%s\n',2);
+dataOpen = fscanf(fileID,"%f,'%d'\n",[2,Inf])';
+
+fclose(fileID);
+
+% Import second file Into Matlab, format [time;value]
+fileID = fopen(fileNameClose, 'r');
+
+row1 = fscanf(fileID,'%s\n',2);
+dataClose = fscanf(fileID,"%f,'%d'\n",[2,Inf])';
+
+fclose(fileID);
+
+% Compute the bits!
+[openInitBits, openRepeatingBits, openRepeatingNumber, setupBitsOpen] = extractInfo(dataOpen(:,1),dataOpen(:,2));
+[closeInitBits, closeRepeatingBits, closeRepeatingNumber, setupBitsClose] = extractInfo(dataClose(:,1),dataClose(:,2));
+
+% Display the values
+diffInitBits = [];
+for i = 1:numel(openInitBits)
+    if (openInitBits(i) == closeInitBits(i))
+        diffInitBits(end+1) = 0;
+    else
+        diffInitBits(end+1) = 1;
+    end 
+end 
+
+if (openRepeatingNumber > closeRepeatingNumber)
+    printRepeatingNumber = openRepeatingNumber;
+else
+    printRepeatingNumber = closeRepeatingNumber;
+end 
+
+fprintf('\n\nOpen Init Value:     %i \nOpen Setup last 128:     %i \nClose Init Value:    %i \nClose Setup last 128:    %i \nDiff of init values: %i \nRepeating Value:     %i\n\n',openInitBits, setupBitsOpen, closeInitStr, setupBitsClose, diffInitStr, printRepeatingNumber)
